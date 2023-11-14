@@ -73,7 +73,10 @@ Se isso acontecer, deverá atualizar o seu repositório com os seguintes comando
 ```bash
 git remote add upstream git@github.com:detiuaveiro/image8bit-pub.git
 git fetch upstream
-git rebase upstream/main
+git checkout main
+git merge --allow-unrelated-histories upstream/main
+# (Resolver quaisquer conflitos que surjam...)
+git commit
 ```
 
 
