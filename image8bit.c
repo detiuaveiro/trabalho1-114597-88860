@@ -324,10 +324,34 @@ int ImageMaxval(Image img) { ///
 /// On return,
 /// *min is set to the minimum gray level in the image,
 /// *max is set to the maximum.
-void ImageStats(Image img, uint8* min, uint8* max) { ///
-  assert (img != NULL);
-  // Insert your code here!
+void ImageStats(Image img, uint8* min, uint8* max) {                  //dia 17
+  assert(img != NULL);
+  assert(min != NULL);
+  assert(max != NULL);
+
+  int width = img->width;
+  int height = img->height;
+
+  // Inicializa min e max com os valores extremos possíveis
+  *min = PixMax;
+  *max = 0;
+
+  // Itera sobre todos os pixels da imagem para encontrar min e max
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      uint8 pixelValue = ImageGetPixel(img, x, y);
+
+      // Atualiza min e max conforme necessário
+      if (pixelValue < *min) {
+        *min = pixelValue;
+      }
+      if (pixelValue > *max) {
+        *max = pixelValue;
+      }
+    }
+  }
 }
+
 
 /// Check if pixel position (x,y) is inside img.
 int ImageValidPos(Image img, int x, int y) { ///
@@ -336,10 +360,23 @@ int ImageValidPos(Image img, int x, int y) { ///
 }
 
 /// Check if rectangular area (x,y,w,h) is completely inside img.
-int ImageValidRect(Image img, int x, int y, int w, int h) { ///
-  assert (img != NULL);
-  // Insert your code here!
+int ImageValidRect(Image img, int x, int y, int w, int h) {                   // dia 17
+  assert(img != NULL);
+
+  // Verifica se as coordenadas são não negativas
+  if (x < 0 || y < 0 || w <= 0 || h <= 0) {
+    return 0;  // Área inválida
+  }
+
+  // Verifica se as coordenadas estão dentro dos limites da imagem
+  if (x + w > img->width || y + h > img->height) {
+    return 0;  // Área ultrapassa os limites da imagem
+  }
+
+  // Se ambas as condições anteriores forem atendidas, a área é válida
+  return 1;
 }
+
 
 /// Pixel get & set operations
 
@@ -351,12 +388,21 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 // Transform (x, y) coords into linear pixel index.
 // This internal function is used in ImageGetPixel / ImageSetPixel. 
 // The returned index must satisfy (0 <= index < img->width*img->height)
-static inline int G(Image img, int x, int y) {
+static inline int G(Image img, int x, int y) {                                      // dia 17
   int index;
-  // Insert your code here!
-  assert (0 <= index && index < img->width*img->height);
+
+  // Verifica se as coordenadas estão dentro dos limites da imagem
+  assert (0 <= x && x < img->width && 0 <= y && y < img->height);
+
+  // Calcula o índice linear
+  index = y * img->width + x;
+
+  // Verifica se o índice está dentro dos limites da imagem
+  assert (0 <= index && index < img->width * img->height);
+
   return index;
 }
+
 
 /// Get the pixel (level) at position (x,y).
 uint8 ImageGetPixel(Image img, int x, int y) { ///

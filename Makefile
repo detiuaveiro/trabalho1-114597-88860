@@ -5,6 +5,8 @@
 # make clean        # to cleanup object files and executables
 # make cleanobj     # to cleanup object files only
 
+RM = rm -f
+
 CFLAGS = -Wall -O2 -g
 
 PROGS = imageTool imageTest
@@ -27,6 +29,9 @@ imageTool.o: image8bit.h instrumentation.h
 
 pgm:
 	wget -O- https://sweet.ua.pt/jmr/aed/pgm.tgz | tar xzf -
+
+#    curl -L -o- https://sweet.ua.pt/jmr/aed/pgm.tgz | tar xzf -
+
 
 .PHONY: setup
 setup: test/
@@ -82,5 +87,7 @@ cleanobj:
 	rm -f *.o
 
 clean: cleanobj
-	rm -f $(PROGS)
+	rm -f $(PROGS) 
+
+
 
