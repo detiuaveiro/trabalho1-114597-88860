@@ -9,11 +9,8 @@
 /// João Manuel Rodrigues <jmr@ua.pt>
 /// 2013, 2023
 
-// Student authors (fill in below):
+// Student authors:
 // NMec: 114597 &  88860  Name: Carlos Verenzuela & Rafael Claro
-// 
-// 
-// 
 // Date: 24 de Novembro de 2023
 //
 
@@ -167,6 +164,8 @@ void ImageInit(void) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
+
+//INICIO
 
 Image ImageCreate(int width, int height, uint8 maxval) {                            ///aula 16 de N
   assert(width >= 0);
