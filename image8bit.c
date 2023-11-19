@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "instrumentation.h"
+#include <math.h>
+#include <stdint.h>
 
 // The data structure
 //
@@ -174,8 +176,10 @@ Image ImageCreate(int width, int height, uint8 maxval) {                        
 
   // Aloca memória para a estrutura da imagem
   Image img = (Image)malloc(sizeof(struct image));
+
   if (img == NULL) {
-    perror("Failed to allocate memory for image structure");
+    errCause = ("Failed to allocate memory in ImageCreate");
+    free(img);
     return NULL;
   }
 
@@ -187,7 +191,7 @@ Image ImageCreate(int width, int height, uint8 maxval) {                        
   // Aloca memória para o array de pixels
   img->pixel = (uint8*)malloc(sizeof(uint8) * width * height);
   if (img->pixel == NULL) {
-    perror("Failed to allocate memory for pixel array");
+    errCause = ("Failed to allocate memory for pixel array");
     free(img); // Libera a memória alocada para a estrutura da imagem
     return NULL;
   }
