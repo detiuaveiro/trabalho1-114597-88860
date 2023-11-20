@@ -487,10 +487,18 @@ void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
     // Calcula o novo valor do pixel multiplicando pelo fator
     uint8_t newPixelValue = (uint8_t)(img->pixel[i] * factor);
 
+    /*
+    // Arredonda o valor para int
+    int newPixelValueInt = (int)round(newPixelValue);
+
     // Atualize o valor do pixel na imagem, tendo em conta que
     //não podem ter um valor maior a PixMax (255)
-    img->pixel[i] = (newPixelValue > PixMax) ? PixMax : newPixelValue;
-  }
+    img->pixel[i] = (newPixelValue > PixMax) ? PixMax : newPixelValueInt;
+  }*/
+
+    // Atualiza o valor do pixel na imagem, limitando a PixMax (fmin escolhe o menor entre dois)
+    img->pixel[i] = (uint8_t)fmin(newPixelValue, PixMax);
+    }
 }
 
 
@@ -519,7 +527,7 @@ void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
 Image ImageRotate(Image img) {                       ///aula de 16 de nov
   assert(img != NULL);
 
-  // Obtenha as dimensões da imagem original
+  // Obter as dimensões da imagem original
   int width = ImageWidth(img);
   int height = ImageHeight(img);
 
@@ -674,7 +682,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) {           
   assert (img1 != NULL);
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
-  assert(alpha >= 0.0 && alpha <= 1.0);
+  //assert(alpha >= 0.0 && alpha <= 1.0);
 
   // Percorre os pixels de img2 e mistura no local apropriado em img1
   for (int i = 0; i < img2->height; ++i) {
