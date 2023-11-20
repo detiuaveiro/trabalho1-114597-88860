@@ -711,7 +711,8 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) {           
         uint8 pixel2 = ImageGetPixel(img2, j, i);
 
         // Calcula o valor blend e atualiza o pixel em img1
-        uint8 blended_pixel = (uint8)((1.0 - alpha) * pixel1 + alpha * pixel2);
+        double aux = (1.0 - alpha) * pixel1 + alpha * pixel2;
+        int8_t blended_pixel = (uint8_t)round(aux);
         ImageSetPixel(img1, img1_x, img1_y, blended_pixel);
       }
     }
