@@ -175,7 +175,7 @@ Image ImageCreate(int width, int height, uint8 maxval) {                        
   assert(0 < maxval && maxval <= PixMax);
 
   // Aloca memória para a estrutura da imagem
-  Image img = (Image)malloc(sizeof(struct image));
+  Image img = (Image)malloc(sizeof(struct image));  
 
   if (img == NULL) {
     errCause = ("Failed to allocate memory in ImageCreate");
@@ -338,7 +338,8 @@ void ImageStats(Image img, uint8* min, uint8* max) {                  //dia 17
 
   //Caso imagem vazia
   if ((width * height) == 0) {
-    *min = *max = 0;
+    *min = 0; 
+    *max = 0;
     return;
   }
 
@@ -480,24 +481,36 @@ void ImageThreshold(Image img, uint8 thr) {        /// aula de 16 de nov
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
   assert(img != NULL);
-  assert(factor >= 0.0);
-
+  if(factor<0.0){factor=0.0;}
+  int width = ImageWidth(img);
+  int height = ImageHeight(img);
   // Percorre todos os pixels da imagem
-  for (int i = 0; i < img->width * img->height; ++i) {
+  //for (int i = 0; i < img->width * img->height; ++i) {
     // Calcula o novo valor do pixel multiplicando pelo fator
-    uint8_t newPixelValue = (uint8_t)(img->pixel[i] * factor);
+    //uint8_t newPixelValue = (uint8_t)(img->pixel[i] * factor);
 
     // Arredonda o valor para int
-    int newPixelValueInt = (int)round(newPixelValue);
-
+    //int newPixelValueInt = (int)round(newPixelValue); 
     // Atualize o valor do pixel na imagem, tendo em conta que
     //não podem ter um valor maior a PixMax (255)
-    img->pixel[i] = (newPixelValueInt > PixMax) ? PixMax : newPixelValueInt;
-  
+    //img->pixel[i] = (newPixelValueInt > PixMax) ? PixMax : newPixelValueInt;
 
-    // Atualiza o valor do pixel na imagem, limitando a PixMax (fmin escolhe o menor entre dois)
-    //img->pixel[i] = (uint8_t)fmin(newPixelValue, PixMax);
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      // Obtenha o valor do pixel da imagem original
+      uint8 pixelValue = ImageGetPixel(img, x, y);
+      
+      // Calcula o novo valor do pixel multiplicando pelo fator
+      
+      uint8_t newpixelValue = (uint8_t)(pixelValue * factor);
+      if(newpixelValue>255){newpixelValue=255;}
+
+      // Defina o pixel na imagem rotacionada
+      ImageSetPixel(img, x, y, newpixelValue);
     }
+  }
+  //
 }
 
 
