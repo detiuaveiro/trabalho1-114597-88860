@@ -503,7 +503,8 @@ void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
       
       // Calcula o novo valor do pixel multiplicando pelo fator
       
-      uint8_t newpixelValue = (uint8_t)(pixelValue * factor);
+      double aux = pixelValue * factor;
+      uint8_t newpixelValue = (uint8_t)round(aux);
       if(newpixelValue>255){newpixelValue=255;}
 
       // Defina o pixel na imagem rotacionada

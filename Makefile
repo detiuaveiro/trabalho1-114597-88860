@@ -7,7 +7,11 @@
 
 RM = rm -f
 
+CC = gcc
+
 CFLAGS = -Wall -O2 -g
+
+LDLIBS = -lm
 
 PROGS = imageTool imageTest
 
