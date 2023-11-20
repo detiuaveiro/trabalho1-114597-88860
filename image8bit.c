@@ -487,17 +487,16 @@ void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
     // Calcula o novo valor do pixel multiplicando pelo fator
     uint8_t newPixelValue = (uint8_t)(img->pixel[i] * factor);
 
-    /*
     // Arredonda o valor para int
     int newPixelValueInt = (int)round(newPixelValue);
 
     // Atualize o valor do pixel na imagem, tendo em conta que
     //não podem ter um valor maior a PixMax (255)
-    img->pixel[i] = (newPixelValue > PixMax) ? PixMax : newPixelValueInt;
-  }*/
+    img->pixel[i] = (newPixelValueInt > PixMax) ? PixMax : newPixelValueInt;
+  
 
     // Atualiza o valor do pixel na imagem, limitando a PixMax (fmin escolhe o menor entre dois)
-    img->pixel[i] = (uint8_t)fmin(newPixelValue, PixMax);
+    //img->pixel[i] = (uint8_t)fmin(newPixelValue, PixMax);
     }
 }
 
