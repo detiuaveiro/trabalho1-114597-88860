@@ -556,13 +556,13 @@ Image ImageRotate(Image img) {                       ///aula de 16 de nov
   // Faça a rotação anti-horária de 90 graus
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
-      // Obtenha o valor do pixel da imagem original
-      uint8 pixelValue = ImageGetPixel(img, x, y);
 
       // Calcule as coordenadas na imagem rotacionada
-      int rotatedX = height - y - 1;
-      int rotatedY = x;
+      int rotatedX = y;
+      int rotatedY = width - x -1;
 
+      // Obtenha o valor do pixel da imagem original
+      uint8 pixelValue = ImageGetPixel(img, x, y);
       // Defina o pixel na imagem rotacionada
       ImageSetPixel(rotatedImage, rotatedX, rotatedY, pixelValue);
     }
