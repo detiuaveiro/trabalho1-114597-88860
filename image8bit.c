@@ -797,10 +797,62 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 
-void ImageBlur(Image img, int dx, int dy) { ///
+void ImageBlur(Image img, int dx, int dy) {
   assert(img != NULL);
   assert(dx >= 0 && dy >= 0);
-  int comps = 0;
+
+  int width = img->width;
+  int height = img->height;
+
+  // Create a temporary image to store the blurred result
+  Image blurredImage = ImageCreate(width, height, img->maxval);
+
+  if (blurredImage == NULL) {
+    // Memory allocation failed
+    return;
+  }
+
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      int8_t mean = 0;
+      if (x == 0 && y == 0) {
+        double aux = ImageGetPixel(img, x, y);
+        mean = (uint8_t)round(aux);
+      } else if (x == 0) {
+        double aux = ImageGetPixel(img, x, y);
+        mean = (uint8_t)round(aux);
+      } else if (y == 0) {
+        double aux = ImageGetPixel(img, x , y);
+        mean = (uint8_t)round(aux);
+      } else {
+        double aux = ImageGetPixel(img, x - 1, y) + ImageGetPixel(img, x, y - 1) - ImageGetPixel(img, x - 1, y - 1);
+        mean = (uint8_t)round(aux);
+      }
+
+      ImageSetPixel(blurredImage, x, y, mean);
+    }
+  }
+    // Carregar a imagem de referência
+  Image referenceImage = ImageLoad("/home/rafael/Desktop/UA/2ano1semestre/AED-projeto/trabalho1-114597-88860/test/blur.pgm");
+  
+
+for (int y = 0; y < height; ++y) {
+  for (int x = 0; x < width; ++x) {
+    if (ImageGetPixel(referenceImage, x, y) != ImageGetPixel(blurredImage, x, y)) {
+      printf("Bytes: Reference=%d, Blurred=%d\n", ImageGetPixel(referenceImage, x, y), ImageGetPixel(blurredImage, x, y));
+    }
+  }
+}
+
+
+  // Destroy the temporary blurred image
+  ImageDestroy(&blurredImage);
+}
+
+
+void ImageBluroficial(Image img, int dx, int dy) { ///
+  assert(img != NULL);
+  assert(dx >= 0 && dy >= 0);
 
   int width = img->width;
   int height = img->height;
@@ -820,7 +872,6 @@ void ImageBlur(Image img, int dx, int dy) { ///
       // Iterate over the pixels in the specified rectangle
       for (int j = -dy; j <= dy; ++j) {
         for (int i = -dx; i <= dx; ++i) {
-          comps++;
           int nx = x + i;
           int ny = y + j;
 
@@ -831,8 +882,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
         }
       }
 
-      // Calcular a media e mandar o pixel para blurred image
+      // Calcular a media
       uint8 mean = (count > 0) ? (sum / count) : 0;
+      // e mandar o pixel para blurred image
       ImageSetPixel(blurredImage, x, y, mean);
     }
   }
@@ -843,8 +895,6 @@ void ImageBlur(Image img, int dx, int dy) { ///
       ImageSetPixel(img, x, y, ImageGetPixel(blurredImage, x, y));
     }
   }
-
-  printf("Total operations Blur: %d (memory operations: %d)\n", width * height * (2 * dy + 1) * (2 * dx + 1), comps);
 
   // Destroy the temporary blurred image
   ImageDestroy(&blurredImage);
