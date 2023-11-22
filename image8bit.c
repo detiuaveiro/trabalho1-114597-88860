@@ -797,105 +797,44 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 
-void ImageBlur(Image img, int dx, int dy) {
-  assert(img != NULL);
-  assert(dx >= 0 && dy >= 0);
 
-  int width = img->width;
-  int height = img->height;
+void ImageBlur(Image img, int dx, int dy) { /// Bruno
+    assert (img != NULL);
+    assert (dx >= 0 && dy >= 0);
 
-  // Create a temporary image to store the blurred result
-  Image blurredImage = ImageCreate(width, height, img->maxval);
+    // Create a temporary image to store the blurred result
+    Image image2 = ImageCreate(img->width, img->height, img->maxval);
 
-  if (blurredImage == NULL) {
-    // Memory allocation failed
-    return;
-  }
-
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      int8_t mean = 0;
-      if (x == 0 && y == 0) {
-        double aux = ImageGetPixel(img, x, y);
-        mean = (uint8_t)round(aux);
-      } else if (x == 0) {
-        double aux = ImageGetPixel(img, x, y);
-        mean = (uint8_t)round(aux);
-      } else if (y == 0) {
-        double aux = ImageGetPixel(img, x , y);
-        mean = (uint8_t)round(aux);
-      } else {
-        double aux = ImageGetPixel(img, x - 1, y) + ImageGetPixel(img, x, y - 1) - ImageGetPixel(img, x - 1, y - 1);
-        mean = (uint8_t)round(aux);
-      }
-
-      ImageSetPixel(blurredImage, x, y, mean);
-    }
-  }
-    // Carregar a imagem de referência
-  Image referenceImage = ImageLoad("/home/rafael/Desktop/UA/2ano1semestre/AED-projeto/trabalho1-114597-88860/test/blur.pgm");
-  
-
-for (int y = 0; y < height; ++y) {
-  for (int x = 0; x < width; ++x) {
-    if (ImageGetPixel(referenceImage, x, y) != ImageGetPixel(blurredImage, x, y)) {
-      printf("Bytes: Reference=%d, Blurred=%d\n", ImageGetPixel(referenceImage, x, y), ImageGetPixel(blurredImage, x, y));
-    }
-  }
-}
-
-
-  // Destroy the temporary blurred image
-  ImageDestroy(&blurredImage);
-}
-
-
-void ImageBluroficial(Image img, int dx, int dy) { ///
-  assert(img != NULL);
-  assert(dx >= 0 && dy >= 0);
-
-  int width = img->width;
-  int height = img->height;
-  
-  // Create a temporary image to store the blurred result
-  Image blurredImage = ImageCreate(width, height, img->maxval);
-
-  if (blurredImage == NULL) {
-    // Memory allocation failed
-    return; }
-
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      double sum = 0;
-      int count = 0;
-
-      // Iterate over the pixels in the specified rectangle
-      for (int j = -dy; j <= dy; ++j) {
-        for (int i = -dx; i <= dx; ++i) {
-          int nx = x + i;
-          int ny = y + j;
-
-          if (ImageValidPos(img, nx, ny)) {
-            sum += ImageGetPixel(img, nx, ny);
-            count++;
-          }
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            int sum = 0;
+            int count = 0;
+            for (int k = -dx; k <= dx; k++) {
+                for (int l = -dy; l <= dy; l++) {
+                    int x = j + k;
+                    int y = i + l;
+                    if (x >= 0 && x < img->width && y >= 0 && y < img->height) {
+                        sum += ImageGetPixel(img, x, y);
+                        count++;
+                    }
+                }
+            }
+            // Use round for proper rounding of the mean
+            float mean = count > 0 ? round((float)sum / (float)count) : 0;
+            // Convert the mean back to uint8
+            uint8 meanInt = (uint8)fmin(img->maxval, fmax(0, mean + 0.5)); // Adicionando 0.5 para arredondar corretamente
+            ImageSetPixel(image2, j, i, meanInt);
         }
-      }
-
-      // Calcular a media
-      uint8 mean = (count > 0) ? (sum / count) : 0;
-      // e mandar o pixel para blurred image
-      ImageSetPixel(blurredImage, x, y, mean);
     }
-  }
 
-  // Copy the blurred image back to the original image
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      ImageSetPixel(img, x, y, ImageGetPixel(blurredImage, x, y));
+    // Copy the blurred result back to the original image
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            uint8 pixelValue = ImageGetPixel(image2, j, i);
+            ImageSetPixel(img, j, i, pixelValue);
+        }
     }
-  }
 
-  // Destroy the temporary blurred image
-  ImageDestroy(&blurredImage);
+    // Destroy the temporary image
+    ImageDestroy(&image2);
 }
