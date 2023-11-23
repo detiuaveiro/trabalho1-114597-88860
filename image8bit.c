@@ -169,7 +169,7 @@ void ImageInit(void) { ///
 
 //INICIO
 
-Image ImageCreate(int width, int height, uint8 maxval) {                            ///aula 16 de N
+Image ImageCreate(int width, int height, uint8 maxval) {                 
   assert(width >= 0);
   assert(height >= 0);
   assert(0 < maxval && maxval <= PixMax);
@@ -211,7 +211,7 @@ Image ImageCreate(int width, int height, uint8 maxval) {                        
 /// Ensures: (*imgp)==NULL.
 /// Should never fail, and should preserve global errno/errCause.
 
-void ImageDestroy(Image* imgp) {                                   ///aula 16 de N
+void ImageDestroy(Image* imgp) {                    
   assert(imgp != NULL);
 
   if (*imgp != NULL) { // Verifica se a imagem não é NULL
@@ -328,7 +328,7 @@ int ImageMaxval(Image img) { ///
 /// On return,
 /// *min is set to the minimum gray level in the image,
 /// *max is set to the maximum.
-void ImageStats(Image img, uint8* min, uint8* max) {                  //dia 17
+void ImageStats(Image img, uint8* min, uint8* max) {             
   assert(img != NULL);
   assert(min != NULL);
   assert(max != NULL);
@@ -367,7 +367,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 }
 
 /// Check if rectangular area (x,y,w,h) is completely inside img.
-int ImageValidRect(Image img, int x, int y, int w, int h) {                   // dia 17
+int ImageValidRect(Image img, int x, int y, int w, int h) {              
   assert(img != NULL);
 
   // Verifica se as coordenadas são não negativas
@@ -395,7 +395,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) {                   //
 // Transform (x, y) coords into linear pixel index.
 // This internal function is used in ImageGetPixel / ImageSetPixel. 
 // The returned index must satisfy (0 <= index < img->width*img->height)
-static inline int G(Image img, int x, int y) {                                      // dia 17
+static inline int G(Image img, int x, int y) {                        
   int index;
 
   // Verifica se as coordenadas estão dentro dos limites da imagem
@@ -439,7 +439,7 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 /// Transform image to negative image.
 /// This transforms dark pixels to light pixels and vice-versa,
 /// resulting in a "photographic negative" effect.
-void ImageNegative(Image img) {                         ///aula 16 de N
+void ImageNegative(Image img) {                  
   assert(img != NULL);
 
   int size = img->width * img->height;
@@ -452,7 +452,7 @@ void ImageNegative(Image img) {                         ///aula 16 de N
 /// Apply threshold to image.
 /// Transform all pixels with level<thr to black (0) and
 /// all pixels with level>=thr to white (maxval).
-void ImageThreshold(Image img, uint8 thr) {        /// aula de 16 de nov
+void ImageThreshold(Image img, uint8 thr) {     
     assert(img != NULL);
 
     int width = img->width;
@@ -479,7 +479,7 @@ void ImageThreshold(Image img, uint8 thr) {        /// aula de 16 de nov
 /// Multiply each pixel level by a factor, but saturate at maxval.
 /// This will brighten the image if factor>1.0 and
 /// darken the image if factor<1.0.
-void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
+void ImageBrighten(Image img, double factor) {          
   assert(img != NULL);
   if(factor<0.0){factor=0.0;}
   int width = ImageWidth(img);
@@ -537,7 +537,7 @@ void ImageBrighten(Image img, double factor) {            ///aula de 16 de nov
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-Image ImageRotate(Image img) {                       ///aula de 16 de nov
+Image ImageRotate(Image img) {                  
   assert(img != NULL);
 
   // Obter as dimensões da imagem original
@@ -581,7 +581,7 @@ Image ImageRotate(Image img) {                       ///aula de 16 de nov
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-Image ImageMirror(Image img) {                                  ///aula de dia 16 de nov
+Image ImageMirror(Image img) {                               
   assert(img != NULL);
 
   // Cria uma nova imagem com as mesmas dimensões e valores máximos
@@ -620,7 +620,7 @@ Image ImageMirror(Image img) {                                  ///aula de dia 1
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-                                                                    ///aula de 16 de nov
+                                                                    
 
 Image ImageCrop(Image img, int x, int y, int w, int h) {
   assert(img != NULL);
@@ -660,7 +660,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) {
 /// Paste img2 into position (x, y) of img1.
 /// This modifies img1 in-place: no allocation involved.
 /// Requires: img2 must fit inside img1 at position (x, y).
-void ImagePaste(Image img1, int x, int y, Image img2) {                                   ///aula de 16 ed nov
+void ImagePaste(Image img1, int x, int y, Image img2) {                       
   assert(img1 != NULL); 
   assert(img2 != NULL);
   assert(ImageValidRect(img1, x, y, img2->width, img2->height));
@@ -691,7 +691,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) {                         
 /// Requires: img2 must fit inside img1 at position (x, y).
 /// alpha usually is in [0.0, 1.0], but values outside that interval
 /// may provide interesting effects.  Over/underflows should saturate.
-void ImageBlend(Image img1, int x, int y, Image img2, double alpha) {                  ///aula de 16 de nov
+void ImageBlend(Image img1, int x, int y, Image img2, double alpha) {     
   assert (img1 != NULL);
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
@@ -768,8 +768,11 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
   assert(img2 != NULL);
   uint64_t count = 0;
 
-  for (int y = 0; y <= img1->height - img2->height; ++y) {
-    for (int x = 0; x <= img1->width - img2->width; ++x) {
+  int height_diff = img1->height - img2->height;
+  int width_diff = img1->width - img2->width;
+
+  for (int y = 0; y <= height_diff; ++y) {
+    for (int x = 0; x <= width_diff; ++x) {
       count += img2->width * img2->height;
       if (ImageMatchSubImage(img1, x, y, img2)) {
         // Subimage found, set the matching position and return 1
@@ -782,7 +785,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
   }
 
       // Se houver uma correspondência, define as posições e retorna 1
-  uint64_t formula = (img1->width-img2->width+1)*(img1->height-img2->height+1)*(img2->width*img2->height);
+  uint64_t formula = (width_diff+1)*(height_diff+1)*(img2->width*img2->height);
 
   printf("Total operations ImageLocateSubImage: %ld \n", formula);
 
