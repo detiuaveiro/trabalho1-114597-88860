@@ -800,7 +800,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 
-void ImageBlur(Image img, int dx, int dy) { /// Bruno
+void ImageBlur(Image img, int dx, int dy) {
     assert (img != NULL);
     assert (dx >= 0 && dy >= 0);
 
@@ -844,4 +844,66 @@ void ImageBlur(Image img, int dx, int dy) { /// Bruno
 
     // Destroy the temporary image
     ImageDestroy(&image2);
+}
+
+// Função otimizada de desfoque usando imagens integrais
+void ImageBlurOptimized(Image img, int dx, int dy) {
+  assert(img != NULL);
+  assert(dx >= 0 && dy >= 0);
+  int ops = 0;
+
+  int width = img->width;
+  int height = img->height;
+
+  // Calcular a imagem integral
+  int* integImg;
+  ComputeIntegralImage(img, &integImg);
+
+
+  if (integImg == NULL) {
+    errCause = "Memory allocation error (ImageBlurOptimized)";
+    return NULL;
+  }
+
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      ops++;
+      int x1 = x - dx - 1;
+      int x2 = x + dx;
+      int y1 = y - dy - 1;
+      int y2 = y + dy;
+
+      // Ajustar os limites do retângulo para estar dentro dos limites da imagem
+      x1 = (x1 < 0) ? 0 : x1;
+      x2 = (x2 >= width) ? width - 1 : x2;
+      y1 = (y1 < 0) ? 0 : y1;
+      y2 = (y2 >= height) ? height - 1 : y2;
+
+      // Calcular a soma dos valores dos píxeis no retângulo usando a imagem integral
+      int sum = integImg[y2 * width + x2];
+
+      if (x1 > 0) 
+        sum -= integImg[y2 * width + x1 - 1];
+      
+      if (y1 > 0) 
+        sum -= integImg[(y1 - 1) * width + x2];
+      
+      if (x1 > 0 && y1 > 0) 
+        sum += integImg[(y1 - 1) * width + x1 - 1];
+      
+      // Calcular o valor médio e definir o píxel
+      // Definir o píxel na imagem desfocada para o valor médio arredondado
+      int count = (x2 - x1 + 1) * (y2 - y1 + 1);
+      uint8 meanValue = (count > 0) ? (uint8)((double)sum / count + 0.5) : 0;
+
+      ImageSetPixel(img, x, y, meanValue);
+    }
+  }
+
+  printf("Pior caso para o número total de operações BlurOptimized: %d\n", 3*(width * height));
+    InstrName[0] = "IterationsBlurOptimized";
+  InstrPrint();
+
+  // Liberar a memória alocada para a imagem integral
+  free(integImg);
 }
