@@ -800,8 +800,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) {
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 
-
-void ImageBlur(Image img, int dx, int dy) {
+void ImageBlur(Image img, int dx, int dy) { /// Bruno
     assert (img != NULL);
     assert (dx >= 0 && dy >= 0);
 
@@ -822,15 +821,20 @@ void ImageBlur(Image img, int dx, int dy) {
                     }
                 }
             }
-            // Usar round para o arredondamento apropriado
-            float mean = count > 0 ? round((float)sum / (float)count) : 0;
-            // Converter mean de volta para uint8
-            uint8 meanInt = (uint8)fmin(img->maxval, fmax(0, mean + 0.5)); // Adicionando 0.5 para arredondar corretamente
+            // Use round for proper rounding of the mean
+            int mean;
+            if (count > 0) {
+                mean = (int)((float)sum / count + 0.5);
+            } else {
+                mean = 0;
+            }
+            // Convert the mean back to uint8
+            uint8 meanInt = (uint8)mean;
             ImageSetPixel(image2, j, i, meanInt);
         }
     }
 
-    // Copiar a blurred result para a imagem original
+    // Copy the blurred result back to the original image
     for (int i = 0; i < img->height; i++) {
         for (int j = 0; j < img->width; j++) {
             uint8 pixelValue = ImageGetPixel(image2, j, i);
@@ -838,5 +842,6 @@ void ImageBlur(Image img, int dx, int dy) {
         }
     }
 
+    // Destroy the temporary image
     ImageDestroy(&image2);
 }
