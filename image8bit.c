@@ -847,7 +847,7 @@ void ImageBlur(Image img, int dx, int dy) {
 }
 
 // Função otimizada de desfoque usando imagens integrais
-void ImageBlurOptimized(Image img, int dx, int dy) {
+/*void ImageBlurOptimized(Image img, int dx, int dy) {
   assert(img != NULL);
   assert(dx >= 0 && dy >= 0);
   int ops = 0;
@@ -901,9 +901,7 @@ void ImageBlurOptimized(Image img, int dx, int dy) {
   }
 
   printf("Pior caso para o número total de operações BlurOptimized: %d\n", 3*(width * height));
-    InstrName[0] = "IterationsBlurOptimized";
-  InstrPrint();
 
   // Liberar a memória alocada para a imagem integral
   free(integImg);
-}
+}*/
