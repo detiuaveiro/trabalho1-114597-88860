@@ -847,7 +847,7 @@ void ImageBlur(Image img, int dx, int dy) {
 }
 
 // Função otimizada de desfoque usando imagens integrais
-/*void ImageBlurOptimized(Image img, int dx, int dy) {
+void ImageBlurOptimized(Image img, int dx, int dy) {
   assert(img != NULL);
   assert(dx >= 0 && dy >= 0);
   int ops = 0;
@@ -857,7 +857,7 @@ void ImageBlur(Image img, int dx, int dy) {
 
   // Calcular a imagem integral
   int* integImg;
-  ComputeIntegralImage(img, &integImg);
+  CreateIntegralImage(img, &integImg);
 
 
   if (integImg == NULL) {
@@ -904,4 +904,36 @@ void ImageBlur(Image img, int dx, int dy) {
 
   // Liberar a memória alocada para a imagem integral
   free(integImg);
-}*/
+}
+
+// Função auxiliar para ImageBlurOptimized
+void CreateIntegralImage(Image img, int** integImg) {
+  int width = img->width;
+  int height = img->height;
+
+  // Alocar memória para a imagem integral
+  *integImg = (int*)malloc(width * height * sizeof(int));
+
+  if (*integImg == NULL) {
+    // Falha na alocação de memória
+    errCause = "Falha na alocação de memória para a imagem integral em ComputeIntegralImage";
+    return;
+  }
+
+  // Inicializar a primeira linha da imagem integral
+  (*integImg)[0] = ImageGetPixel(img, 0, 0);
+
+  // Calcular a primeira linha
+  for (int x = 1; x < width; ++x) {
+    (*integImg)[x] = (*integImg)[x - 1] + ImageGetPixel(img, x, 0);
+  }
+
+  // Calcular as linhas restantes
+  for (int y = 1; y < height; ++y) {
+    int rowSum = 0;
+    for (int x = 0; x < width; ++x) {
+      rowSum += ImageGetPixel(img, x, y);
+      (*integImg)[y * width + x] = (*integImg)[(y - 1) * width + x] + rowSum;
+    }
+  }
+}
